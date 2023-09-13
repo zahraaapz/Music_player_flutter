@@ -22,7 +22,7 @@ late var playerList ;
     super.onInit();
    playerList=ConcatenatingAudioSource(children: [],useLazyPreparation: true) ;
    await getListPlayer();
-await player.setAudioSource(playerList,initialIndex:0,initialPosition:Duration.zero);
+   await player.setAudioSource(playerList,initialIndex:0,initialPosition:Duration.zero);
   }
 
   getListPlayer() async {
@@ -45,12 +45,12 @@ await player.setAudioSource(playerList,initialIndex:0,initialPosition:Duration.z
     // log(playerList.toString());
 
 
-  var response=await DioService().getMusic('https://api.npoint.io/7a29ea291a5fddd40498')  ;
-
+  var response=await DioService().getMusic('https://api.npoint.io/957942c3a386be904ade')  ;
+log(response.data.toString());
 for (var element in response.data) {
   songs.add(SongModel.fromJson(element));
- playerList.add(AudioSource.uri(Uri.parse(SongModel.fromJson(element).path!)));
-log(playerList.toString());
+ playerList.add(AudioSource.uri(Uri.parse('asset:///'+SongModel.fromJson(element).path!)));
+log(playerList.length.toString());
 
 }
 

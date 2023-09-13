@@ -40,12 +40,12 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
               begin: Alignment.bottomLeft,
               end: Alignment.topRight,
               colors: [
-              Color(0xfffe8dc6),
+              Color(0xfff02fc2),
               Color(0xfffed1c7),
             ])
           ),
       child: Scaffold(
-       
+       backgroundColor: Colors.transparent,
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {
@@ -57,6 +57,8 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
               )),
           elevation: 0,
           systemOverlayStyle: SystemUiOverlayStyle(
+            systemNavigationBarDividerColor: Colors.transparent,
+         systemNavigationBarIconBrightness: Brightness.dark,
               statusBarIconBrightness: Brightness.dark,
               statusBarColor: Colors.transparent),
           backgroundColor: Colors.transparent,
@@ -125,7 +127,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.only(left:25,right:25,top:10),
                   child: ProgressBar(
                     bufferedBarColor: Color.fromARGB(38, 83, 109, 254),
                     progressBarColor: Color.fromARGB(70, 132, 141, 194),
