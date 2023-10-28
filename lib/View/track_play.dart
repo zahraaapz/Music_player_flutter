@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:music_player/Controller/controller.dart';
+import 'package:music_player/View/playList.dart';
 
 class TrackPlay extends StatefulWidget {
   const TrackPlay({super.key});
@@ -12,9 +13,9 @@ class TrackPlay extends StatefulWidget {
 
 class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
   bool isLike = false;
-  late int index;
+  RxInt index = 0.obs;
+  var controller=Get.find<PlayerController>();
   late Animation<double> turns;
-  var playerController = Get.put(PlayerController());
   late var animController;
 
   @override
@@ -22,233 +23,244 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
     super.initState();
 
     animController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
     turns = Tween<double>(begin: 0, end: 20).animate(animController);
 
-    index = Get.arguments;
+    index.value = Get.arguments;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-         foregroundDecoration: BoxDecoration(
-            color:Colors.transparent,
-          ),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-              Color(0xfff02fc2),
-              Color(0xfffed1c7),
-            ])
-          ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+            colors: ([
+          Color(0xfffbc7d4),
+          Color(0xff9796f0),
+        ])),
+      ),
       child: Scaffold(
-       backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {
-                Get.back();
+                
+                controller.player.playing
+                    ? controller.player.pause()
+                    : null;
+                    
+                    
+                     controller.player.playing
+                    ?  controller.timer!.cancel():null; 
+                    
+                    
+                    
+                   
+
+
+
+                Get.offAll(Playlist());
               },
-              icon: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.black,
-              )),
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.white)),
           elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            systemNavigationBarDividerColor: Colors.transparent,
-         systemNavigationBarIconBrightness: Brightness.dark,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+              systemNavigationBarDividerColor: Colors.transparent,
+              systemNavigationBarIconBrightness: Brightness.dark,
               statusBarIconBrightness: Brightness.dark,
               statusBarColor: Colors.transparent),
           backgroundColor: Colors.transparent,
         ),
         body: Obx(
-          () =>  Column(
-              children: [
-            playerController.songs[index].ima==null ? 
-            Container(
-                  width: Get.width / 1.2,
-                  height: Get.height / 2,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(colors: [
-                        Color.fromARGB(136, 63, 81, 181),
-                        const Color.fromARGB(75, 63, 81, 181),
-                      ])),
-                ): 
-                 Container(
-                  width: Get.width / 1.2,
-                  height: Get.height / 2,
-                  decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(20),
-                     image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: 
-                     AssetImage(playerController.songs[index].ima!))),
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 20,
+          () => Column(
+            children: [
+              controller.songs[index.value].ima == null
+                  ? Container(
+                      width: Get.width / 1.2,
+                      height: Get.height / 2,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          gradient: const LinearGradient(colors: [
+                            Color.fromARGB(136, 63, 81, 181),
+                            Color.fromARGB(75, 63, 81, 181),
+                          ])),
+                    )
+                  : Container(
+                      width: Get.width / 1.2,
+                      height: Get.height / 2,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(Get.find<PlayerController>()
+                                  .songs[index.value]
+                                  .ima!))),
                     ),
-                    AnimatedRotation(
-                        duration: Duration(seconds: 1),
-                        turns: turns.value,
-                        child: Icon(
-                          Icons.audiotrack_rounded,
-                          color: Colors.indigo,
-                        )),
-                    Text(playerController.playerList[index].uri.pathSegments.last),
-                    Spacer(),
-                    AnimatedOpacity(
-                        curve: Curves.bounceIn,
-                        duration: Duration(seconds: 1),
-                        opacity: 1,
-                        child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                if (isLike) {
-                                  isLike = false;
-                                  animController.reverse();
-                                  print(animController.value.toString());
-                                } else {
-                                  isLike = true;
-                                  if (!animController.isCompleted) {
-                                    animController.forward();
-                                    print(animController.value.toString());
-                                  }
-                                }
-                              });
-                            },
-                            icon: isLike
-                                ? Icon(Icons.favorite_sharp, color: Colors.red)
-                                : Icon(Icons.favorite_outline_outlined)))
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left:25,right:25,top:10),
-                  child: ProgressBar(
-                    bufferedBarColor: Color.fromARGB(38, 83, 109, 254),
-                    progressBarColor: Color.fromARGB(70, 132, 141, 194),
-                    baseBarColor: Color.fromARGB(54, 62, 72, 138),
-                    thumbColor: Color.fromARGB(158, 63, 81, 181),
-                    progress: playerController.progress.value,
-                    buffered: playerController.buffer.value,
-                    total: playerController.player.duration ?? Duration(seconds: 0),
-                    onSeek: (position) async {
-          
-                      playerController.player.seek(position);
-                       if (playerController.player.playing) {
-                        playerController
-                            .playerAction();
-                      } else if (position <= Duration(seconds: 0)) {
-                        await playerController.player.seekToNext();
-                        playerController.currectFileIndex.value =
-                            playerController.player.currentIndex!;
-                        playerController.checkTimer();
-                      }
-                    },
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20,
                   ),
-                ),
-                SizedBox(
-                  height: 60,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(colors: [
-                            Color.fromARGB(136, 63, 81, 181),
-                            const Color.fromARGB(75, 63, 81, 181),
-                          ])),
-                      child: IconButton(
-                          onPressed: () async {
-                            await playerController.player.seekToPrevious();
-                            playerController.currectFileIndex.value =
-                                playerController.player.currentIndex!;
-          
-                            playerController.checkTimer();
-                          },
-                          icon: Icon(
-                            Icons.skip_previous,
-                            color: Colors.white,
-                          )),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(colors: [
-                            Color.fromARGB(136, 63, 81, 181),
-                            const Color.fromARGB(75, 63, 81, 181),
-                          ])),
+                  AnimatedRotation(
+                      duration: const Duration(seconds: 1),
+                      turns: turns.value,
+                      child: const Icon(
+                        Icons.audiotrack_rounded,
+                        color: Colors.indigo,
+                      )),
+                  Text(Get.find<PlayerController>()
+                      .songs[index.value]
+                      .musicName!),
+                  Spacer(),
+                  AnimatedOpacity(
+                      curve: Curves.bounceIn,
+                      duration: const Duration(seconds: 1),
+                      opacity: 1,
                       child: IconButton(
                           onPressed: () {
-                            playerController.player.playing
-                                ? playerController.timer!.cancel()
-                                : playerController.playerAction(
-                                    );
-          
-                            if (playerController.player.playing) {
-                              playerController.player.pause();
-                              playerController.isPlaying.value = false;
-                            } else {
-                              playerController.player.play();
-                              playerController.isPlaying.value = true;
-                            }
-                            playerController.currectFileIndex.value =
-                                playerController.player.currentIndex!;
+                            setState(() {
+                              if (isLike) {
+                                isLike = false;
+                                animController.reverse();
+                                print(animController.value.toString());
+                              } else {
+                                isLike = true;
+                                if (!animController.isCompleted) {
+                                  animController.forward();
+                                  print(animController.value.toString());
+                                }
+                              }
+                            });
                           },
-                          icon: playerController.isPlaying.value
-                              ? Icon(Icons.pause, color: Colors.white)
-                              : Icon(Icons.play_arrow, color: Colors.white)),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(colors: [
-                            Color.fromARGB(136, 63, 81, 181),
-                            const Color.fromARGB(75, 63, 81, 181),
-                          ])),
-                      child: IconButton(
-                          onPressed: () async {
-                            await playerController.player.seekToNext();
-                            playerController.currectFileIndex.value =
-                                playerController.player.currentIndex!;
-          
-                            playerController.checkTimer();
-                          },
-                          icon: Icon(Icons.skip_next, color: Colors.white)),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(colors: [
-                            Color.fromARGB(136, 63, 81, 181),
-                            const Color.fromARGB(75, 63, 81, 181),
-                          ])),
-                      child: IconButton(
-                          onPressed: () {
-          
-                             playerController.setLoopMode();
-          
-          
-          
-                          },
-                          icon: Icon(
-                            
-                            
-                            Icons.repeat_outlined, color: playerController.isLoopMode.value? Colors.blue: Colors.white,
-          )),
-                    ),
-                  ],
-                )
-              ],
-            ),
+                          icon: isLike
+                              ? const Icon(Icons.favorite_sharp,
+                                  color: Colors.red)
+                              : const Icon(Icons.favorite_outline_outlined)))
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
+                child: ProgressBar(
+                  timeLabelTextStyle: const TextStyle(color: Colors.white),
+                  bufferedBarColor: const Color.fromARGB(38, 83, 109, 254),
+                  progressBarColor: const Color.fromARGB(70, 132, 141, 194),
+                  baseBarColor: const Color.fromARGB(54, 62, 72, 138),
+                  thumbColor: const Color.fromARGB(158, 63, 81, 181),
+                  progress: controller.progress.value,
+                  buffered: controller.buffer.value,
+                  total: controller.player.duration ??
+                      const Duration(seconds: 0),
+                  onSeek: (position) async {
+                    controller.player.seek(position);
+                    if (controller.player.playing) {
+                      controller.playerAction();
+                    } else if (position <= const Duration(seconds: 0)) {
+                      await controller.player.seekToNext();
+                   
+                      controller.checkTimer();
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 60,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(136, 63, 81, 181),
+                          Color.fromARGB(75, 63, 81, 181),
+                        ])),
+                    child: IconButton(
+                        onPressed: () async {
+                          await Get.find<PlayerController>()
+                              .player
+                              .seekToPrevious();
+                          index.value == 0
+                              ? null
+                              : index.value = index.value - 1;
+                          controller.checkTimer();
+                        },
+                        icon: const Icon(
+                          Icons.skip_previous,
+                          color: Colors.white,
+                        )),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(136, 63, 81, 181),
+                          Color.fromARGB(75, 63, 81, 181),
+                        ])),
+                    child: IconButton(
+                        onPressed: () {
+                          controller.player.playing
+                              ? controller.timer!.cancel()
+                              : controller.playerAction();
+
+                          if (controller.player.playing) {
+                            controller.player.pause();
+                            controller.isPlaying.value =
+                                false;
+                          } else {
+                            controller.player.play();
+                            controller.isPlaying.value = true;
+                          }
+                       
+                        },
+                        icon: controller.isPlaying.value
+                            ? Icon(Icons.pause, color: Colors.white)
+                            : Icon(Icons.play_arrow, color: Colors.white)),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(136, 63, 81, 181),
+                          Color.fromARGB(75, 63, 81, 181),
+                        ])),
+                    child: IconButton(
+                        onPressed: () async {
+                          await Get.find<PlayerController>()
+                              .player
+                              .seekToNext();
+
+                          index.value + 1 ==
+                                  controller.songs.length
+                              ? index.value = 0
+                              : index.value = index.value + 1;
+                          controller.checkTimer();
+                        },
+                        icon: const Icon(Icons.skip_next, color: Colors.white)),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(colors: [
+                          Color.fromARGB(136, 63, 81, 181),
+                          Color.fromARGB(75, 63, 81, 181),
+                        ])),
+                    child: IconButton(
+                        onPressed: () {
+                          controller.setLoopMode();
+                        },
+                        icon: Icon(
+                          Icons.repeat_outlined,
+                          color: controller.isLoopMode.value
+                              ? Colors.blue
+                              : Colors.white,
+                        )),
+                  ),
+                ],
+              )
+            ],
           ),
-        
+        ),
       ),
     );
   }

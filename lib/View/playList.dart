@@ -6,18 +6,18 @@ import 'package:music_player/View/track_play.dart';
 
 class Playlist extends StatelessWidget{
   Playlist({super.key});
-  var controller=Get.put(PlayerController());
+  final PlayerController controller=Get.put(PlayerController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle(
+          systemOverlayStyle: const SystemUiOverlayStyle(
               statusBarIconBrightness: Brightness.dark,
               statusBarColor: Colors.transparent),
           backgroundColor: Colors.transparent,
-          title: Text(
+          title: const Text(
             'My MUSIC',
             style: TextStyle(color: Colors.indigo),
           ),
@@ -30,7 +30,16 @@ class Playlist extends StatelessWidget{
                       child: Column(
                         children: [
                           InkWell(
-                            onTap: () => Get.to(TrackPlay(), arguments: index),
+                            onTap: () { 
+
+                      
+                    
+                    
+                     controller.player.playing
+                    ?  null:controller.checkTimer(); 
+
+                            Get.to(const TrackPlay(), arguments: index);
+                              },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -49,11 +58,11 @@ class Playlist extends StatelessWidget{
                                     : Container(
                                         width: 60,
                                         height: 60,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                             gradient: LinearGradient(
                                           colors: [
                                             Color.fromARGB(136, 63, 81, 181),
-                                            const Color.fromARGB(
+                                            Color.fromARGB(
                                                 75, 63, 81, 181)
                                           ],
                                         )),
@@ -71,7 +80,7 @@ class Playlist extends StatelessWidget{
                                 Spacer(),
                                 IconButton(
                                     onPressed: () {},
-                                    icon: Icon(
+                                    icon: const Icon(
                                       color: Color.fromARGB(181, 158, 158, 158),
                                       Icons.more_vert_outlined,
                                       size: 30,
@@ -82,9 +91,9 @@ class Playlist extends StatelessWidget{
                           SizedBox(
                             height: 10,
                           ),
-                          Divider(
+                          const Divider(
                             height: 2,
-                            color: const Color.fromARGB(73, 158, 158, 158),
+                            color: Color.fromARGB(73, 158, 158, 158),
                             thickness: 1,
                             endIndent: 40,
                             indent: 40,

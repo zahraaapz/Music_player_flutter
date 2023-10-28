@@ -10,7 +10,7 @@ class PlayerController extends GetxController {
 late var playerList ;
   RxList<SongModel> songs=RxList();
 
-  RxInt currectFileIndex = 0.obs;
+
   final player = AudioPlayer();
   RxBool isPlaying = false.obs;
   RxBool isLoopMode = false.obs;
@@ -64,7 +64,7 @@ log(playerList.length.toString());
 
   }
 
-  Timer? timer;
+Timer? timer;
 
 checkTimer(){
 
@@ -73,6 +73,7 @@ if(player.playing){
   playerAction();
 }
 else{
+timer==null?null:
 timer!.cancel();
 buffer.value=Duration(seconds: 0);
 progress.value=Duration(seconds: 0);
