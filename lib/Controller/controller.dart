@@ -73,8 +73,8 @@ if(player.playing){
   playerAction();
 }
 else{
-timer==null?null:
-timer!.cancel();
+timer!=null?
+timer!.cancel():null;
 buffer.value=Duration(seconds: 0);
 progress.value=Duration(seconds: 0);
 }
@@ -83,7 +83,7 @@ progress.value=Duration(seconds: 0);
 
 
 
-  playerAction() async {
+  playerAction() {
     
 
     const tick = Duration(seconds: 1);
@@ -100,6 +100,7 @@ progress.value=Duration(seconds: 0);
       totalDuration--;
       progress.value = player.position;
       buffer.value = player.bufferedPosition;
+      
     });
 
     if (totalDuration <= 0) {
