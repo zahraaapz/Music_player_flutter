@@ -46,21 +46,9 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
           leading: IconButton(
               onPressed: () {
                 
-                controller.player.playing
-                    ? controller.player.pause()
-                    : null;
-                    
-                    
-                     controller.player.playing
-                    ?  controller.timer!.cancel():null; 
-                    
-                    
-                    
                    
-
-
-
                 Get.offAll(Playlist());
+
               },
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white)),
           elevation: 0,
@@ -141,6 +129,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
                 child: ProgressBar(
+                  
                   timeLabelTextStyle: const TextStyle(color: Colors.white),
                   bufferedBarColor: const Color.fromARGB(38, 83, 109, 254),
                   progressBarColor: const Color.fromARGB(70, 132, 141, 194),
@@ -232,7 +221,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
 
                           index.value + 1 ==
                                   controller.songs.length
-                              ? index.value = 0
+                              ? null
                               : index.value = index.value + 1;
                           controller.checkTimer();
                         },

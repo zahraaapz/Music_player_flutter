@@ -11,7 +11,7 @@ late var playerList ;
   RxList<SongModel> songs=RxList();
 
 
-  final player = AudioPlayer();
+  late  AudioPlayer player = AudioPlayer();
   RxBool isPlaying = false.obs;
   RxBool isLoopMode = false.obs;
   Rx<Duration> progress = Duration(seconds: 0).obs;
@@ -69,15 +69,14 @@ Timer? timer;
 checkTimer(){
 
 if(player.playing){
-  timer!.cancel();
   playerAction();
+  print('LLLL');
 }
 else{
-timer!=null?
-timer!.cancel():null;
+timer!.cancel();
 buffer.value=Duration(seconds: 0);
 progress.value=Duration(seconds: 0);
-}
+ print('P');}
 
 }
 

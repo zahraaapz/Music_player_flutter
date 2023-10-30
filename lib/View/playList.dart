@@ -31,12 +31,17 @@ class Playlist extends StatelessWidget{
                         children: [
                           InkWell(
                             onTap: () { 
-
-                        controller.player.playing
-                              ? controller.timer!.cancel()
-                              : null;
                     
-                    print(controller.timer.toString());
+                    
+                    
+                    if (controller.player.playing) {
+                      controller.player.pause();
+                      controller.isPlaying.value=false;
+                      controller.checkTimer();
+                    } 
+                    controller.playerAction();
+                  
+                     print(controller.timer.toString());
                  
 
                             Get.to(const TrackPlay(), arguments: index);

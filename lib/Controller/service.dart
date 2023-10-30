@@ -6,7 +6,7 @@ class DioService {
   
   Future<dynamic>getMusic(String url){
 
-
+   dio.options.headers['Content-type']='application/json';
     return dio.get(
     url,
     options: Options(
