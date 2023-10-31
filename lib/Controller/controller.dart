@@ -3,19 +3,18 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/Controller/service.dart';
-
 import '../Model/song_model.dart';
 
 class PlayerController extends GetxController {
-late var playerList ;
+  late var playerList;
   RxList<SongModel> songs=RxList();
-
-
   late  AudioPlayer player = AudioPlayer();
   RxBool isPlaying = false.obs;
   RxBool isLoopMode = false.obs;
   Rx<Duration> progress = Duration(seconds: 0).obs;
   Rx<Duration> buffer = Duration(seconds: 0).obs;
+ 
+   
 
   @override
   onInit() async  {
@@ -23,6 +22,8 @@ late var playerList ;
    playerList=ConcatenatingAudioSource(children: [],useLazyPreparation: true) ;
    await getListPlayer();
    await player.setAudioSource(playerList,initialIndex:0,initialPosition:Duration.zero);
+   
+   
   }
 
   getListPlayer() async {
@@ -49,7 +50,7 @@ late var playerList ;
 log(response.data.toString());
 for (var element in response.data) {
   songs.add(SongModel.fromJson(element));
- playerList.add(AudioSource.uri(Uri.parse('asset:///'+SongModel.fromJson(element).path!)));
+ playerList.add(AudioSource.uri(Uri.parse('asset:///${SongModel.fromJson(element).path!}')));
 log(playerList.length.toString());
 
 }
