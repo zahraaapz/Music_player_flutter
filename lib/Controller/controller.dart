@@ -7,23 +7,21 @@ import '../Model/song_model.dart';
 
 class PlayerController extends GetxController {
   late var playerList;
-  RxList<SongModel> songs=RxList();
-  late  AudioPlayer player = AudioPlayer();
+  RxList<SongModel> songs = RxList();
+  late AudioPlayer player = AudioPlayer();
   RxBool isPlaying = false.obs;
   RxBool isLoopMode = false.obs;
   Rx<Duration> progress = Duration(seconds: 0).obs;
   Rx<Duration> buffer = Duration(seconds: 0).obs;
- 
-   
 
   @override
-  onInit() async  {
+  onInit() async {
     super.onInit();
-   playerList=ConcatenatingAudioSource(children: [],useLazyPreparation: true) ;
-   await getListPlayer();
-   await player.setAudioSource(playerList,initialIndex:0,initialPosition:Duration.zero);
-   
-   
+    playerList =
+        ConcatenatingAudioSource(children: [], useLazyPreparation: true);
+    await getListPlayer();
+    await player.setAudioSource(playerList,
+        initialIndex: 0, initialPosition: Duration.zero);
   }
 
   getListPlayer() async {
@@ -45,49 +43,34 @@ class PlayerController extends GetxController {
 
     // log(playerList.toString());
 
-
-  var response=await DioService().getMusic('https://api.npoint.io/957942c3a386be904ade')  ;
-log(response.data.toString());
-for (var element in response.data) {
-  songs.add(SongModel.fromJson(element));
- playerList.add(AudioSource.uri(Uri.parse('asset:///${SongModel.fromJson(element).path!}')));
-log(playerList.length.toString());
-
-}
-
-
-
-
-
-
-
-
-
+    var response = await DioService()
+        .getMusic('https://api.npoint.io/957942c3a386be904ade');
+    log(response.data.toString());
+    for (var element in response.data) {
+      songs.add(SongModel.fromJson(element));
+      playerList.add(AudioSource.uri(
+          Uri.parse('asset:///${SongModel.fromJson(element).path!}')));
+      log(playerList.length.toString());
+    }
   }
 
-Timer? timer;
+  Timer? timer;
 
-checkTimer(){
-
-if(player.playing){
-  playerAction();
-  print('LLLL');
-}
-else{
-timer!.cancel();
-buffer.value=Duration(seconds: 0);
-progress.value=Duration(seconds: 0);
- print('P');}
-
-}
-
-
+  checkTimer() {
+    if (player.playing) {
+      playerAction();
+      print('LLLL');
+    } else {
+      timer!.cancel();
+      buffer.value = Duration(seconds: 0);
+      progress.value = Duration(seconds: 0);
+      print('P');
+    }
+  }
 
   playerAction() {
-    
-
     const tick = Duration(seconds: 1);
-    int totalDuration = player.duration!.inSeconds-player.position.inSeconds;
+    int totalDuration = player.duration!.inSeconds - player.position.inSeconds;
 
     if (timer != null) {
       if (timer!.isActive) {
@@ -100,7 +83,6 @@ progress.value=Duration(seconds: 0);
       totalDuration--;
       progress.value = player.position;
       buffer.value = player.bufferedPosition;
-      
     });
 
     if (totalDuration <= 0) {
@@ -109,30 +91,13 @@ progress.value=Duration(seconds: 0);
     }
   }
 
-
-
-setLoopMode(){
-
-if (isLoopMode.value) {
- 
-  isLoopMode.value=false;
-  player.setLoopMode(LoopMode.off);
-}else{
-
-   isLoopMode.value=true;
-     player.setLoopMode(LoopMode.all);
-
-}
-
-}
-
-
-
-
-
-
-
-
-
-
+  setLoopMode() {
+    if (isLoopMode.value) {
+      isLoopMode.value = false;
+      player.setLoopMode(LoopMode.off);
+    } else {
+      isLoopMode.value = true;
+      player.setLoopMode(LoopMode.all);
+    }
+  }
 }

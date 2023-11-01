@@ -14,7 +14,7 @@ class TrackPlay extends StatefulWidget {
 class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
   bool isLike = false;
   RxInt index = 0.obs;
-  var controller=Get.find<PlayerController>();
+  var controller = Get.find<PlayerController>();
   late Animation<double> turns;
   late var animController;
 
@@ -45,10 +45,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {
-                
-                   
                 Get.offAll(Playlist());
-
               },
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white)),
           elevation: 0,
@@ -80,9 +77,8 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                           borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
                               fit: BoxFit.fill,
-                              image: AssetImage(Get.find<PlayerController>()
-                                  .songs[index.value]
-                                  .ima!))),
+                              image: AssetImage(
+                                  controller.songs[index.value].ima!))),
                     ),
               Row(
                 children: [
@@ -96,9 +92,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                         Icons.audiotrack_rounded,
                         color: Colors.indigo,
                       )),
-                  Text(Get.find<PlayerController>()
-                      .songs[index.value]
-                      .musicName!),
+                  Text(controller.songs[index.value].musicName!),
                   Spacer(),
                   AnimatedOpacity(
                       curve: Curves.bounceIn,
@@ -129,7 +123,6 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
                 child: ProgressBar(
-                  
                   timeLabelTextStyle: const TextStyle(color: Colors.white),
                   bufferedBarColor: const Color.fromARGB(38, 83, 109, 254),
                   progressBarColor: const Color.fromARGB(70, 132, 141, 194),
@@ -137,15 +130,15 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                   thumbColor: const Color.fromARGB(158, 63, 81, 181),
                   progress: controller.progress.value,
                   buffered: controller.buffer.value,
-                  total: controller.player.duration ??
-                      const Duration(seconds: 0),
+                  total:
+                      controller.player.duration ?? const Duration(seconds: 0),
                   onSeek: (position) async {
                     controller.player.seek(position);
                     if (controller.player.playing) {
                       controller.playerAction();
                     } else if (position <= const Duration(seconds: 0)) {
                       await controller.player.seekToNext();
-                   
+
                       controller.checkTimer();
                     }
                   },
@@ -166,9 +159,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                         ])),
                     child: IconButton(
                         onPressed: () async {
-                          await Get.find<PlayerController>()
-                              .player
-                              .seekToPrevious();
+                          await controller.player.seekToPrevious();
                           index.value == 0
                               ? null
                               : index.value = index.value - 1;
@@ -187,20 +178,18 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                           Color.fromARGB(75, 63, 81, 181),
                         ])),
                     child: IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           controller.player.playing
                               ? controller.timer!.cancel()
                               : controller.playerAction();
 
                           if (controller.player.playing) {
-                            controller.player.pause();
-                            controller.isPlaying.value =
-                                false;
+                            await controller.player.pause();
+                            controller.isPlaying.value = false;
                           } else {
-                            controller.player.play();
+                            await controller.player.play();
                             controller.isPlaying.value = true;
                           }
-                       
                         },
                         icon: controller.isPlaying.value
                             ? Icon(Icons.pause, color: Colors.white)
@@ -215,12 +204,9 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                         ])),
                     child: IconButton(
                         onPressed: () async {
-                          await Get.find<PlayerController>()
-                              .player
-                              .seekToNext();
+                          await controller.player.seekToNext();
 
-                          index.value + 1 ==
-                                  controller.songs.length
+                          index.value + 1 == controller.songs.length
                               ? null
                               : index.value = index.value + 1;
                           controller.checkTimer();
