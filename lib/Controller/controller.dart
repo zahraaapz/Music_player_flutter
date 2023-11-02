@@ -2,12 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:music_player/Controller/service.dart';
 import '../Model/song_model.dart';
 
 class PlayerController extends GetxController {
   late var playerList;
-  RxList<SongModel> songs = RxList();
   late AudioPlayer player = AudioPlayer();
   RxBool isPlaying = false.obs;
   RxBool isLoopMode = false.obs;
@@ -18,7 +16,7 @@ class PlayerController extends GetxController {
   onInit() async {
     super.onInit();
     playerList =
-        ConcatenatingAudioSource(children: [], useLazyPreparation: true);
+        ConcatenatingAudioSource(children:[], useLazyPreparation: true);
     await getListPlayer();
     await player.setAudioSource(playerList,
         initialIndex: 0, initialPosition: Duration.zero);
@@ -43,13 +41,11 @@ class PlayerController extends GetxController {
 
     // log(playerList.toString());
 
-    var response = await DioService()
-        .getMusic('https://api.npoint.io/957942c3a386be904ade');
-    log(response.data.toString());
-    for (var element in response.data) {
-      songs.add(SongModel.fromJson(element));
+
+    for (var element in songs) {
+  
       playerList.add(AudioSource.uri(
-          Uri.parse('asset:///${SongModel.fromJson(element).path!}')));
+          Uri.parse('asset:///${element.path}')));
       log(playerList.length.toString());
     }
   }

@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:music_player/Controller/controller.dart';
 import 'package:music_player/View/track_play.dart';
 
+import '../Model/song_model.dart';
+
 class Playlist extends StatelessWidget {
   Playlist({super.key});
   final PlayerController controller = Get.put(PlayerController());
@@ -23,7 +25,7 @@ class Playlist extends StatelessWidget {
           ),
         ),
         body: Obx(() => ListView.builder(
-            itemCount: controller.songs.length,
+            itemCount: songs.length,
             itemBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -46,7 +48,7 @@ class Playlist extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            controller.songs[index].ima != null
+                          songs[index].ima != null
                                 ? Container(
                                     width: 60,
                                     height: 60,
@@ -55,7 +57,7 @@ class Playlist extends StatelessWidget {
                                         image: DecorationImage(
                                             fit: BoxFit.fill,
                                             image: AssetImage(
-                                                controller.songs[index].ima!))),
+                                                songs[index].ima!))),
                                   )
                                 : Container(
                                     width: 60,
@@ -74,7 +76,7 @@ class Playlist extends StatelessWidget {
                             SizedBox(
                               width: 200,
                               child: Text(
-                                controller.songs[index].musicName!,
+                                songs[index].musicName!,
                                 maxLines: 2,
                               ),
                             ),

@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:music_player/Controller/controller.dart';
 import 'package:music_player/View/playList.dart';
 
+import '../Model/song_model.dart';
+
 class TrackPlay extends StatefulWidget {
   const TrackPlay({super.key});
   @override
@@ -59,7 +61,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
         body: Obx(
           () => Column(
             children: [
-              controller.songs[index.value].ima == null
+             songs[index.value].ima == null
                   ? Container(
                       width: Get.width / 1.2,
                       height: Get.height / 2,
@@ -78,7 +80,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                           image: DecorationImage(
                               fit: BoxFit.fill,
                               image: AssetImage(
-                                  controller.songs[index.value].ima!))),
+                                  songs[index.value].ima!))),
                     ),
               Row(
                 children: [
@@ -92,7 +94,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                         Icons.audiotrack_rounded,
                         color: Colors.indigo,
                       )),
-                  Text(controller.songs[index.value].musicName!),
+                  Text(songs[index.value].musicName!),
                   Spacer(),
                   AnimatedOpacity(
                       curve: Curves.bounceIn,
@@ -206,7 +208,7 @@ class _TrackPlayState extends State<TrackPlay> with TickerProviderStateMixin {
                         onPressed: () async {
                           await controller.player.seekToNext();
 
-                          index.value + 1 == controller.songs.length
+                          index.value + 1 == songs.length
                               ? null
                               : index.value = index.value + 1;
                           controller.checkTimer();
