@@ -55,12 +55,12 @@ class PlayerController extends GetxController {
   checkTimer() {
     if (player.playing) {
       playerAction();
-      print('LLLL');
+    
     } else {
       timer!.cancel();
       buffer.value = Duration(seconds: 0);
       progress.value = Duration(seconds: 0);
-      print('P');
+  
     }
   }
 
